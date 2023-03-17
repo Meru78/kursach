@@ -1,4 +1,6 @@
-﻿namespace kursach.DBManager.Models.User
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace kursach.DBManager.Models.UserModels
 {
     public class User
     {

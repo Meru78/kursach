@@ -1,20 +1,17 @@
 using kursach.Data;
 using kursach.DBManager;
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
-using MySqlConnector;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
-
-DBManager.connStr = builder.Configuration["ConnectionStrings:DefaultConnection"];
-MySqlConnection mySqlConnection = DBManager.GetConnection();
-builder.Services.AddSingleton<MySqlConnection>(mySqlConnection);
-
 
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddSingleton<WeatherForecastService>();
+
+//database
+builder.Services.AddDbContext<DBManager>(options =>
+  options.UseSqlServer(builder.Configuration["ConnectionStrings:DefaultConnection"]));
 
 var app = builder.Build();
 
@@ -24,6 +21,19 @@ if (!app.Environment.IsDevelopment())
     app.UseExceptionHandler("/Error");
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
+}
+else
+{
+    app.UseDeveloperExceptionPage();
+}
+
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+
+    var context = services.GetRequiredService<DBManager>();
+    context.Database.EnsureCreated();
+    // DbInitializer.Initialize(context);
 }
 
 app.UseHttpsRedirection();
