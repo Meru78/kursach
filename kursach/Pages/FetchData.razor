@@ -3,7 +3,9 @@
 <PageTitle>Weather forecast</PageTitle>
 
 @using kursach.Data
+@using kursach.DBManager
 @inject WeatherForecastService ForecastService
+@inject DBManager _context;
 
 <h1>Weather forecast</h1>
 
@@ -43,6 +45,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
+        Console.WriteLine(_context.Users.FirstOrDefault());
         forecasts = await ForecastService.GetForecastAsync(DateTime.Now);
     }
 }

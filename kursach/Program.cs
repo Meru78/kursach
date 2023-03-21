@@ -11,7 +11,7 @@ builder.Services.AddSingleton<WeatherForecastService>();
 
 //database
 builder.Services.AddDbContext<DBManager>(options =>
-  options.UseSqlServer(builder.Configuration["ConnectionStrings:DefaultConnection"]));
+  options.UseMySql(builder.Configuration["ConnectionStrings:DefaultConnection"], new MySqlServerVersion(new Version(8, 0, 25))));
 
 var app = builder.Build();
 
