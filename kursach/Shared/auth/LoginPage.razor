@@ -1,6 +1,7 @@
 @page "/login"
-@using System.Text.RegularExpressions;
 @using DBManager.Models.UserModels
+@using System.Text;
+@using utils;
 @layout AuthLayout
 @inject NavigationManager NavigationManager
 @inject UserController userController
@@ -13,8 +14,8 @@
     <h4 class="header">Авторизация</h4>
 
     <div class="input-group mb-3">
-        <span class="input-group-text w-25" id="Email">Login</span>
-        <input type="text" class="form-control" aria-describedby="Email" @bind-value="Login">
+        <span class="input-group-text w-25" id="Login">Login</span>
+        <input type="text" class="form-control" aria-describedby="Login" @bind-value="Login">
     </div>
 
     <div class="input-group mb-3">
@@ -58,7 +59,9 @@
             return;
         }
 
-        var user = userController.GetUserByLoginPass(this.Login, this.Password);
+        String passHash = utils.Utils.sha256_hash(this.Password);
+
+        var user = userController.GetUserByLoginPass(this.Login, passHash);
 
         if(user == null)
         {

@@ -1,13 +1,72 @@
 @page "/registration"
 @layout AuthLayout
+@using DBManager.Models.UserModels
+@using System.Text;
+@using utils;
+@inject NavigationManager NavigationManager
+@inject UserController userController
 
 <PageTitle>
     Регистрация
 </PageTitle>
 
 <div>
+    <h4 class="header">Регистрация</h4>
 
+    <div class="input-group mb-3">
+        <span class="input-group-text w-25" id="Login">Login</span>
+        <input type="text" class="form-control" aria-describedby="Login" @bind-value="Login">
+    </div>
+
+    <div class="input-group mb-3">
+        <span class="input-group-text w-25" id="Email">Email</span>
+        <input type="text" class="form-control" aria-describedby="Email" @bind-value="Email">
+    </div>
+
+    <div class="input-group mb-3">
+        <span class="input-group-text w-25" id="FIO">ФИО</span>
+        <input type="text" class="form-control" aria-describedby="FIO" @bind-value="FIO">
+    </div>
+
+    <div class="input-group mb-3">
+        <span class="input-group-text w-25" id="Phone">Телефон</span>
+        <input type="text" class="form-control" aria-describedby="Phone" @bind-value="Phone">
+    </div>
+
+    <div class="input-group mb-3">
+        <span class="input-group-text w-25" id="Password">Пароль</span>
+        <input type="text" class="form-control" aria-describedby="Password" @bind-value="Password">
+    </div>
+
+    <button type="button" class="btn btn-primary mb-4 button" @onclick="HandleClick">Войти</button>
 </div>
 
 @code {
+    private String? Login { get; set; }
+    private String? Email { get; set; }
+    private String? FIO { get; set; }
+    private String? Phone { get; set; }
+    private String? Password { get; set; }
+
+    private void HandleClick()
+    {
+        User user = new User
+        {
+            FIO = this.FIO,
+            PasswordHash = utils.Utils.sha256_hash(this.Password),
+            Email = this.Email,
+            Phone = this.Phone,
+            Login = this.Login
+        };
+
+        var checkUser = userController.GetUserByLoginPass(user.Login, user.PasswordHash);
+
+        if(checkUser != null)
+        {
+            return;
+        }
+
+        userController.CreateUser(user);
+        NavigationManager.NavigateTo("/login");
+    }
 }

@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace kursach.DBManager.Models.UserModels
 {
@@ -20,6 +21,12 @@ namespace kursach.DBManager.Models.UserModels
         {
             User? user = _context.Users.Where(row => row.Login == login && row.PasswordHash == passHash).FirstOrDefault();
             return user;
+        }
+
+        public void CreateUser(User user)
+        {
+            _context.Users.Add(user);
+            _context.SaveChanges();
         }
     }
 }
