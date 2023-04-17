@@ -1,0 +1,62 @@
+@page "/login"
+@using System.Text.RegularExpressions;
+@layout AuthLayout
+@inject NavigationManager NavigationManager
+
+<PageTitle>
+    Авторизация
+</PageTitle>
+
+<div>
+    <div class="form-outline mb-4">
+        <input type="email" id="email" class="form-control" @bind-value="Email" />
+        <label class="form-label" for="emial">Email</label>
+    </div>
+
+    <!-- Password input -->
+    <div class="form-outline mb-4">
+        <input type="password" id="password" class="form-control" @bind-value="Password" />
+        <label class="form-label" for="password">Пароль</label>
+    </div>
+
+    @if (FormError)
+    {
+        <div style="color:red">Не верный email или пароль</div>
+    }
+
+    <a href="/registration">Регистрация</a>
+
+    <button type="button" class="btn btn-primary mb-4" @onclick="Auth">Войти</button>
+</div>
+
+
+@code {
+    private bool FormError { get; set; } = false;
+
+    private String Email { get; set; } = "";
+
+    private String Password { get; set; } = "";
+
+    private bool Validate()
+    {
+        Regex emailRegex = new Regex(@"^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$");
+
+        if (this.Email == "" || !emailRegex.IsMatch(this.Email)) return false;
+        if (this.Password == "") return false;
+
+        return true;
+    }
+
+    private void Auth()
+    {
+        if (!Validate())
+        {
+            FormError = true;
+            return;
+        }
+
+        FormError = false;
+
+        NavigationManager.NavigateTo("/");
+    }
+}
