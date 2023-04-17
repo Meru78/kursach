@@ -15,5 +15,11 @@ namespace kursach.DBManager.Models.UserModels
         {
             return await _context.Users.ToArrayAsync();
         }
+
+        public User? GetUserByLoginPass(string login, string passHash)
+        {
+            User? user = _context.Users.Where(row => row.Login == login && row.PasswordHash == passHash).FirstOrDefault();
+            return user;
+        }
     }
 }

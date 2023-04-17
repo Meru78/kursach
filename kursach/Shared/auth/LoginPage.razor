@@ -1,47 +1,50 @@
 @page "/login"
 @using System.Text.RegularExpressions;
+@using DBManager.Models.UserModels
 @layout AuthLayout
 @inject NavigationManager NavigationManager
+@inject UserController userController
 
 <PageTitle>
     Авторизация
 </PageTitle>
 
 <div>
-    <div class="form-outline mb-4">
-        <input type="email" id="email" class="form-control" @bind-value="Email" />
-        <label class="form-label" for="emial">Email</label>
+    <h4 class="header">Авторизация</h4>
+
+    <div class="input-group mb-3">
+        <span class="input-group-text w-25" id="Email">Login</span>
+        <input type="text" class="form-control" aria-describedby="Email" @bind-value="Login">
     </div>
 
-    <!-- Password input -->
-    <div class="form-outline mb-4">
-        <input type="password" id="password" class="form-control" @bind-value="Password" />
-        <label class="form-label" for="password">Пароль</label>
+    <div class="input-group mb-3">
+        <span class="input-group-text w-25" id="Password">Password</span>
+        <input type="password" class="form-control" aria-describedby="Password" @bind-value="Password">
     </div>
 
     @if (FormError)
     {
-        <div style="color:red">Не верный email или пароль</div>
+        <div class="error">Не верный email или пароль</div>
     }
 
-    <a href="/registration">Регистрация</a>
+    <a class="registration" href="/registration">Регистрация</a>
 
-    <button type="button" class="btn btn-primary mb-4" @onclick="Auth">Войти</button>
+    <br />
+
+    <button type="button" class="btn btn-primary mb-4 button" @onclick="Auth">Войти</button>
 </div>
 
 
 @code {
     private bool FormError { get; set; } = false;
 
-    private String Email { get; set; } = "";
+    private String Login { get; set; } = "";
 
     private String Password { get; set; } = "";
 
     private bool Validate()
     {
-        Regex emailRegex = new Regex(@"^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$");
-
-        if (this.Email == "" || !emailRegex.IsMatch(this.Email)) return false;
+        if (this.Login == "") return false;
         if (this.Password == "") return false;
 
         return true;
@@ -55,7 +58,13 @@
             return;
         }
 
-        FormError = false;
+        var user = userController.GetUserByLoginPass(this.Login, this.Password);
+
+        if(user == null)
+        {
+            FormError = true;
+            return;
+        }
 
         NavigationManager.NavigateTo("/");
     }

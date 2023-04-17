@@ -1,0 +1,18 @@
+﻿.error{
+    color: red;
+    width: 100%;
+    text-align: right;
+}
+
+.header{
+    margin-bottom: 30px;
+}
+
+.registration{
+    float: right;
+}
+
+.button{
+    margin-top: 20px;
+    width: 100%;
+}
