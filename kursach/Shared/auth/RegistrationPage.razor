@@ -38,6 +38,10 @@
         <input type="text" class="form-control" aria-describedby="Password" @bind-value="Password">
     </div>
 
+    <span>
+        Введите правильные данные
+    </span>
+
     <button type="button" class="btn btn-primary mb-4 button" @onclick="HandleClick">Войти</button>
 </div>
 
@@ -48,8 +52,21 @@
     private String? Phone { get; set; }
     private String? Password { get; set; }
 
+    private bool FormError { get; set; } = false;
+
+    private bool Validate()
+    {
+        return true;
+    }
+
     private void HandleClick()
     {
+        if (!Validate())
+        {
+            FormError = true;
+            return;
+        }
+
         User user = new User
         {
             FIO = this.FIO,
