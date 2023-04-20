@@ -1,5 +1,7 @@
 using kursach.DBManager;
 using kursach.DBManager.Models.UserModels;
+using kursach.utils;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.EntityFrameworkCore;
 
 internal class Program
@@ -12,6 +14,11 @@ internal class Program
         builder.Services.AddRazorPages();
         builder.Services.AddServerSideBlazor();
         builder.Services.AddTransient<UserController>();
+
+        // auth core
+        builder.Services.AddOptions();
+        builder.Services.AddAuthenticationCore();
+        builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>();
 
         //database
         builder.Services.AddDbContext<DBManager>(options =>

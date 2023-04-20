@@ -10,13 +10,23 @@
     </div>
 
     <main>
-        <div class="top-row px-4">
-            <NavLink href="login">
-                <button>Войти</button>
-            </NavLink>
-            <NavLink href="registration">
-                <button>Регистрация</button>
-            </NavLink>
+        <div class="top-row px-2">
+            <CascadingAuthenticationState>
+                <AuthorizeView>
+                    <Authorized>
+                        <button class="btn">Выйти</button>
+                    </Authorized>
+                    <NotAuthorized>
+                        <NavLink href="login">
+                            <button class="btn">Войти</button>
+                        </NavLink>
+                        <NavLink href="registration">
+                            <button class="btn">Регистрация</button>
+                        </NavLink>
+                    </NotAuthorized>
+                </AuthorizeView>                
+            </CascadingAuthenticationState>
+            
         </div>
 
         <article class="content px-4">

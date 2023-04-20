@@ -5,6 +5,7 @@
 @layout AuthLayout
 @inject NavigationManager NavigationManager
 @inject UserController userController
+@inject AuthenticationStateProvider authenticationStateProvider
 
 <PageTitle>
     Авторизация
@@ -51,7 +52,7 @@
         return true;
     }
 
-    private void Auth()
+    private async void Auth()
     {
         if (!Validate())
         {
@@ -68,6 +69,9 @@
             FormError = true;
             return;
         }
+
+        authenticationStateProvider = new CustomAuthStateProvider(user);
+        await authenticationStateProvider.GetAuthenticationStateAsync();
 
         NavigationManager.NavigateTo("/");
     }
