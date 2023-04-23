@@ -1,3 +1,4 @@
+using Blazored.LocalStorage;
 using kursach.DBManager;
 using kursach.DBManager.Models.UserModels;
 using kursach.utils;
@@ -15,7 +16,8 @@ internal class Program
         builder.Services.AddServerSideBlazor();
         builder.Services.AddTransient<UserController>();
 
-        // auth core
+        builder.Services.AddBlazoredLocalStorage();
+        // auth conn
         builder.Services.AddOptions();
         builder.Services.AddAuthenticationCore();
         builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>();
@@ -52,7 +54,6 @@ internal class Program
         app.UseStaticFiles();
 
         app.UseRouting();
-
         app.MapBlazorHub();
         app.MapFallbackToPage("/_Host");
 

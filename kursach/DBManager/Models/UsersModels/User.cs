@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace kursach.DBManager.Models.UserModels
 {

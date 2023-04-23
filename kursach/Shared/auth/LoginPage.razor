@@ -1,11 +1,14 @@
 @page "/login"
 @using DBManager.Models.UserModels
 @using System.Text;
+@using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 @using utils;
 @layout AuthLayout
 @inject NavigationManager NavigationManager
 @inject UserController userController
 @inject AuthenticationStateProvider authenticationStateProvider
+@inject ProtectedSessionStorage ProtectedSessionStore
+@inject Blazored.LocalStorage.ILocalStorageService iLocalStorageService
 
 <PageTitle>
     Авторизация
@@ -70,7 +73,7 @@
             return;
         }
 
-        authenticationStateProvider = new CustomAuthStateProvider(user);
+        await iLocalStorageService.SetItemAsync<User>("user", user);
         await authenticationStateProvider.GetAuthenticationStateAsync();
 
         NavigationManager.NavigateTo("/");
