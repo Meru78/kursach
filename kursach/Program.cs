@@ -1,4 +1,5 @@
 using Blazored.LocalStorage;
+using kursach;
 using kursach.DBManager;
 using kursach.DBManager.Models.UserModels;
 using kursach.utils;
@@ -55,7 +56,7 @@ internal class Program
 
         app.UseRouting();
         app.MapBlazorHub();
-        app.MapFallbackToPage("/_Host");
+        app.MapFallbackToPage("/_host");
 
         app.Run();
     }

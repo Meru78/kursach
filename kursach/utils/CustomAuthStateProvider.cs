@@ -11,23 +11,32 @@ namespace kursach.utils
         public CustomAuthStateProvider(ILocalStorageService localStorage) {
             _localStorage = localStorage;
         }
-        public override async Task<AuthenticationState> GetAuthenticationStateAsync()
+        public override async Task<AuthenticationState?> GetAuthenticationStateAsync()
         {
             var state = new AuthenticationState(new ClaimsPrincipal());
 
-            var user = await _localStorage.GetItemAsync<User>("user");
+            var user = new User();
 
-            if(user != null)
+            try
             {
-                var identity = new ClaimsIdentity(new[]
-                {
-                    new Claim(ClaimTypes.Name, user.Login),
-                    new Claim(ClaimTypes.Role, user.RightType),
-                    new Claim(ClaimTypes.Email, user.Email),
-                });
+                user = await _localStorage.GetItemAsync<User>("user");
 
-                state = new AuthenticationState(new ClaimsPrincipal(identity));
+                if (user != null)
+                {
+                    var identity = new ClaimsIdentity(new[]
+                    {
+                        new Claim(ClaimTypes.Name, user.Login),
+                        new Claim(ClaimTypes.Role, user.RightType),
+                        new Claim(ClaimTypes.Email, user.Email),
+                    });
+
+                    state = new AuthenticationState(new ClaimsPrincipal(identity));
+                }
             }
+            catch (Exception ex) { 
+                Console.WriteLine(ex);
+                return null;
+            }            
 
             NotifyAuthenticationStateChanged(Task.FromResult(state));
             return state;

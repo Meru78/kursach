@@ -3,12 +3,13 @@
 @using System.Text;
 @using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 @using utils;
+@using Blazored.LocalStorage;
 @layout AuthLayout
 @inject NavigationManager NavigationManager
 @inject UserController userController
 @inject AuthenticationStateProvider authenticationStateProvider
 @inject ProtectedSessionStorage ProtectedSessionStore
-@inject Blazored.LocalStorage.ILocalStorageService iLocalStorageService
+@inject ILocalStorageService iLocalStorageService
 
 <PageTitle>
     Авторизация
