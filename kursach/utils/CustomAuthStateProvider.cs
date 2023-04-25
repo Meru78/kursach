@@ -15,18 +15,25 @@ namespace kursach.utils
         {
             var state = new AuthenticationState(new ClaimsPrincipal());
 
-            var user = await _localStorage.GetItemAsync<User>("user");
-
-            if(user != null)
+            try
             {
-                var identity = new ClaimsIdentity(new[]
-                {
-                    new Claim(ClaimTypes.Name, user.Login),
-                    new Claim(ClaimTypes.Role, user.RightType),
-                    new Claim(ClaimTypes.Email, user.Email),
-                });
+                var user = await _localStorage.GetItemAsync<User>("user");
 
-                state = new AuthenticationState(new ClaimsPrincipal(identity));
+                if (user != null)
+                {
+                    var identity = new ClaimsIdentity(
+                        new[]
+                        {
+                            new Claim(ClaimTypes.Name, user.Login),
+                            new Claim(ClaimTypes.Role, user.RightType),
+                            new Claim(ClaimTypes.Email, user.Email),
+                        }, "CustomApiKeyAuth"
+                    );
+
+                    state = new AuthenticationState(new ClaimsPrincipal(identity));                    
+                }
+                Console.WriteLine("authtorized");
+            } catch (Exception ex) {
             }
 
             NotifyAuthenticationStateChanged(Task.FromResult(state));
