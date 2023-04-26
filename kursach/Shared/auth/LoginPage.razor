@@ -8,8 +8,7 @@
 @inject NavigationManager NavigationManager
 @inject UserController userController
 @inject AuthenticationStateProvider authenticationStateProvider
-@inject ProtectedSessionStorage ProtectedSessionStore
-@inject ILocalStorageService iLocalStorageService
+@inject Blazored.LocalStorage.ILocalStorageService iLocalStorageService
 
 <PageTitle>
     Авторизация
@@ -75,7 +74,7 @@
         }
 
         await iLocalStorageService.SetItemAsync<User>("user", user);
-        await authenticationStateProvider.GetAuthenticationStateAsync();
+        var state = await authenticationStateProvider.GetAuthenticationStateAsync();
 
         NavigationManager.NavigateTo("/");
     }
