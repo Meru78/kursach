@@ -7,21 +7,28 @@
 </PageTitle>
 
 <div class="table">
-    <table>
-        <th>
-            <td>id</td>
-            <td>Организация</td>
-            <td>Сумма</td>
-            <td>Дата поставки</td>
-            <td>Дата создания</td>            
-        </th>
+    <NavLink href="supply_create">
+        <button class="btn btn-primary">
+            Создать
+        </button>
+    </NavLink>
+    <table class="table">
+        <tr>
+            <th scope="col">Номер</th>
+            <th scope="col">Организация</th>
+            <th scope="col">Сумма</th>
+            <th scope="col">Дата поставки</th>
+            <th scope="col">Дата создания</th>
+            <th scope="col">Проведена</th>
+        </tr>
         @foreach(var supply in supplies){
             <tr>
-                <td>@supply.SupplyId</td>
+                <td scope="row">@supply.SupplyId</td>
                 <td>@supply.Organization</td>
                 <td>@supply.Summ</td>
                 <td>@supply.SupplyDate</td>
                 <td>@supply.CreatedAt</td>
+                <td>@supply.Done</td>
             </tr>
         }
     </table>

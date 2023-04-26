@@ -1,0 +1,27 @@
+﻿.items_list_title_box {
+    display: flex;
+}
+
+.items_list_title{
+    margin-right:10px;
+}
+
+.items_list {
+    border: solid 0.5px;
+    border-color: gainsboro;
+    border-radius: 4px;s
+}
+
+.item_box {
+    border: solid 0.5px;
+    border-color: gainsboro;
+    border-radius: 4px;
+    background-color: gainsboro;
+
+    padding: 10px;
+    margin-top: 8px;
+}
+
+.add_button{
+    margin-left: 10px;
+}

@@ -1,0 +1,91 @@
+﻿@page "/supply_create"
+@using kursach.DBManager.Models.ItemModels;
+
+<PageTitle>
+    Новая поставка
+</PageTitle>
+
+<div>
+    <div class="input-group mb-3">
+      <div class="input-group-prepend">
+            <span class="input-group-text" id="organization">Организация</span>
+      </div>
+        <input type="text" @bind-value="Organization" class="form-control" aria-describedby="organization">
+    </div>
+
+    <div class="items_list p-2">
+        <div class="items_list_title_box row">
+            <span class="items_list_title col">Товары</span>
+            <button type="button" onclick="@AddNewItem" class="add_button btn btn-light btn-sm col-1">+</button>
+        </div>
+        @foreach (var item in items){
+            <div class="item_box">
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="organization">Название</span>
+                    </div>
+                    <input type="text" @bind-value="item.Name" class="form-control" aria-describedby="organization">
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="description">Описание</span>
+                    </div>
+                    <input type="text" multiple @bind-value="item.Description" class="form-control" aria-describedby="description" />
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="type">Тип</span>
+                    </div>
+                    <input type="text" @bind-value="item.Type" class="form-control" aria-describedby="type" />
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="image">Изображение</span>
+                    </div>
+                    <input type="file" @onchange="@((ChangeEventArgs __e) => item.Image = (byte[])__e?.Value)" class="form-control" aria-describedby="image" />
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="count">Количество</span>
+                    </div>
+                    <input type="number" @bind-value="item.Count" class="form-control" aria-describedby="count" />
+                </div>
+
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="coast">Количество</span>
+                    </div>
+                    <input type="number" @bind-value="item.Coast" class="form-control" aria-describedby="coast" />
+                </div>
+            </div>            
+        }
+    </div>
+
+    <button type="button" class="btn btn-success">Создать</button>
+</div>
+
+@code {
+    private String Organization { get; set; }
+
+    private List<Item> items { get; set; } = new List<Item>();
+
+    private void AddNewItem(){
+        var item = new Item()
+            {
+                Name = "",
+                Description = "",
+                Type = "",
+                Image = null,
+                Coast = 0,
+                Count = 0,
+                CreatedAt = DateTime.Now
+            };
+        items.Add(item);
+
+        StateHasChanged();
+    }
+}

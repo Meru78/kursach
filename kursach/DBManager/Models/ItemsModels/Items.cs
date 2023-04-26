@@ -21,7 +21,6 @@ namespace kursach.DBManager.Models.ItemModels
         public double Coast { get; set; }
         [Column("created_at")]
         public DateTime CreatedAt { get; set; }
-        [Column("supply_id")]
-        public int SupplyID { get; set; }
+        [Column("supply_id")] public int SupplyID { get; set; }
     }
 }

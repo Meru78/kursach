@@ -14,5 +14,7 @@ namespace kursach.DBManager.Models.SupplyModels
         public DateTime SupplyDate { get; set; }
         [Column("summ")]
         public DateTime Summ { get; set; }
+        [Column("done")]
+        public Boolean Done { get; set; }
     }
 }
