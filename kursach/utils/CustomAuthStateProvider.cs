@@ -21,6 +21,7 @@ namespace kursach.utils
 
                 if (user != null)
                 {
+                    Console.WriteLine(user.RightType);
                     var identity = new ClaimsIdentity(
                         new[]
                         {

@@ -1,6 +1,7 @@
 using Blazored.LocalStorage;
 using kursach;
 using kursach.DBManager;
+using kursach.DBManager.Models.SupplyModels;
 using kursach.DBManager.Models.UserModels;
 using kursach.utils;
 using Microsoft.AspNetCore.Components.Authorization;
@@ -16,6 +17,7 @@ internal class Program
         builder.Services.AddRazorPages();
         builder.Services.AddServerSideBlazor();
         builder.Services.AddTransient<UserController>();
+        builder.Services.AddTransient<SupplyController>();
 
         builder.Services.AddBlazoredLocalStorage();
         // auth conn

@@ -1,0 +1,37 @@
+﻿@page "/supplies"
+@using kursach.DBManager.Models.SupplyModels;
+@inject SupplyController supplyController
+
+<PageTitle>
+    Поставки
+</PageTitle>
+
+<div class="table">
+    <table>
+        <th>
+            <td>id</td>
+            <td>Организация</td>
+            <td>Сумма</td>
+            <td>Дата поставки</td>
+            <td>Дата создания</td>            
+        </th>
+        @foreach(var supply in supplies){
+            <tr>
+                <td>@supply.SupplyId</td>
+                <td>@supply.Organization</td>
+                <td>@supply.Summ</td>
+                <td>@supply.SupplyDate</td>
+                <td>@supply.CreatedAt</td>
+            </tr>
+        }
+    </table>
+</div>
+
+
+@code {
+    private Supply[] supplies { get; set; }
+
+    protected override async Task OnInitializedAsync(){
+        supplies = await supplyController.GetSuppliesAsync();
+    }
+}

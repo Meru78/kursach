@@ -30,7 +30,7 @@
                         </NavLink>
                     </NotAuthorized>
                 </AuthorizeView>                
-            </CascadingAuthenticationState>            
+            </CascadingAuthenticationState>
         </div>
 
         <article class="content px-4">
@@ -38,23 +38,3 @@
         </article>
     </main>
 </div>
-
-@code{
-
-    [CascadingParameter]
-    private Task<AuthenticationState>? authenticationState { get; set; }
-
-    protected override async Task OnInitializedAsync()
-    {
-        if (authenticationState is not null)
-        {
-            var authState = await authenticationState;
-            var user = authState?.User;
-
-            if (user?.Identity is not null && user.Identity.IsAuthenticated)
-            {
-                Console.WriteLine(user.Identity.Name);
-            }
-        }
-    }
-}

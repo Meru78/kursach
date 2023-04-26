@@ -10,5 +10,9 @@ namespace kursach.DBManager.Models.SupplyModels
         public string Organization { get; set; }
         [Column("created_at")]
         public DateTime CreatedAt { get; set; }
+        [Column("supply_date")]
+        public DateTime SupplyDate { get; set; }
+        [Column("summ")]
+        public DateTime Summ { get; set; }
     }
 }
