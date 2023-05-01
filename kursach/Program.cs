@@ -1,11 +1,13 @@
 using Blazored.LocalStorage;
 using kursach;
 using kursach.DBManager;
+using kursach.DBManager.Models.ItemsModels;
 using kursach.DBManager.Models.SupplyModels;
 using kursach.DBManager.Models.UserModels;
 using kursach.utils;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.EntityFrameworkCore;
+using Tewr.Blazor.FileReader;
 
 internal class Program
 {
@@ -18,6 +20,7 @@ internal class Program
         builder.Services.AddServerSideBlazor();
         builder.Services.AddTransient<UserController>();
         builder.Services.AddTransient<SupplyController>();
+        builder.Services.AddTransient<ItemsController>();
 
         builder.Services.AddBlazoredLocalStorage();
         // auth conn
@@ -28,6 +31,9 @@ internal class Program
         //database
         builder.Services.AddDbContext<DBManager>(options =>
           options.UseMySql(builder.Configuration["ConnectionStrings:DefaultConnection"], new MySqlServerVersion(new Version(8, 0, 25))));
+
+        //filereader
+        builder.Services.AddFileReaderService();
 
         var app = builder.Build();
 

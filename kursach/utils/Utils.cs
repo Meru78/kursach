@@ -1,4 +1,5 @@
-﻿using System.Security.Cryptography;
+﻿using System.Runtime.Serialization.Formatters.Binary;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace kursach.utils
@@ -20,5 +21,10 @@ namespace kursach.utils
 
             return Sb.ToString();
         }
-    }
+        public static byte[] ConvertToByteArray(string filePath)
+        {
+            byte[] fileByteArray = File.ReadAllBytes(filePath);
+            return fileByteArray;
+        }
+    }    
 }

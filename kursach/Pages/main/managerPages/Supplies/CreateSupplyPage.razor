@@ -1,5 +1,14 @@
-﻿@page "/supply_create"
+﻿@page "/supply_create/{SupplyId?}"
+@using Tewr.Blazor.FileReader;
 @using kursach.DBManager.Models.ItemModels;
+@using kursach.DBManager.Models.ItemsModels;
+@using kursach.DBManager.Models.SupplyModels;
+@using utils;
+@using Supplies;
+@inject IFileReaderService fileReaderService;
+@inject SupplyController supplyController;
+@inject ItemsController itemsController;
+@inject NavigationManager NavigationManager;
 
 <PageTitle>
     Новая поставка
@@ -10,68 +19,136 @@
       <div class="input-group-prepend">
             <span class="input-group-text" id="organization">Организация</span>
       </div>
-        <input type="text" @bind-value="Organization" class="form-control" aria-describedby="organization">
+        <input type="text" @bind-value="Organization" class="form-control" aria-describedby="organization" disabled="@Disabled">
     </div>
 
-    <div class="items_list p-2">
+    <div class="input-group mb-3">
+        <div class="input-group-prepend">
+            <span class="input-group-text" id="supply_date">Дата поставки</span>
+        </div>
+        <input type="datetime" @bind-value="SupplyDate" class="form-control" aria-describedby="supply_date" disabled="@Disabled">
+    </div>
+
+    <div class="items_list p-2 mb-3">
         <div class="items_list_title_box row">
             <span class="items_list_title col">Товары</span>
-            <button type="button" onclick="@AddNewItem" class="add_button btn btn-light btn-sm col-1">+</button>
+            <button type="button" onclick="@AddNewItem" class="add_button btn btn-light btn-sm col-1" disabled="@Disabled">+</button>
         </div>
+        @{
+            int i = 0;
+        }
         @foreach (var item in items){
             <div class="item_box">
                 <div class="input-group mb-3">
-                    <div class="input-group-prepend">
+                    <div class="input-group-prepend w-25">
                         <span class="input-group-text" id="organization">Название</span>
                     </div>
-                    <input type="text" @bind-value="item.Name" class="form-control" aria-describedby="organization">
+                    <input type="text" @bind-value="item.Name" class="form-control" aria-describedby="organization" disabled="@Disabled">
                 </div>
 
                 <div class="input-group mb-3">
-                    <div class="input-group-prepend">
+                    <div class="input-group-prepend w-25">
                         <span class="input-group-text" id="description">Описание</span>
                     </div>
-                    <input type="text" multiple @bind-value="item.Description" class="form-control" aria-describedby="description" />
+                    <input type="text" multiple @bind-value="item.Description" class="form-control" aria-describedby="description" disabled="@Disabled" />
                 </div>
 
                 <div class="input-group mb-3">
-                    <div class="input-group-prepend">
+                    <div class="input-group-prepend w-25">
                         <span class="input-group-text" id="type">Тип</span>
                     </div>
-                    <input type="text" @bind-value="item.Type" class="form-control" aria-describedby="type" />
+                    <input type="text" @bind-value="item.Type" class="form-control" aria-describedby="type" disabled="@Disabled" />
                 </div>
 
                 <div class="input-group mb-3">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text" id="image">Изображение</span>
+                    <input type="file" @ref="fileUpload" @onchange="@((ChangeEventArgs changeEventArgs) => SetImage(changeEventArgs, i))" class="form-control" disabled="@Disabled" />
+                </div>
+
+                @if (item.Image != null)
+                {
+                    <div class="mb-3">
+                        <img class="image" src="@(string.Format("data:image/jpg;base64,{0}", Convert.ToBase64String(item.Image)))" />
                     </div>
-                    <input type="file" @onchange="@((ChangeEventArgs __e) => item.Image = (byte[])__e?.Value)" class="form-control" aria-describedby="image" />
-                </div>
+                }
 
                 <div class="input-group mb-3">
-                    <div class="input-group-prepend">
+                    <div class="input-group-prepend w-25">
                         <span class="input-group-text" id="count">Количество</span>
                     </div>
-                    <input type="number" @bind-value="item.Count" class="form-control" aria-describedby="count" />
+                    <input type="number" @bind-value="item.Count" class="form-control" aria-describedby="count" disabled="@Disabled" />
                 </div>
 
-                <div class="input-group">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text" id="coast">Количество</span>
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend w-25">
+                        <span class="input-group-text" id="coast">Стоимость</span>
                     </div>
-                    <input type="number" @bind-value="item.Coast" class="form-control" aria-describedby="coast" />
+                    <input type="number" @bind-value="item.Coast" class="form-control" aria-describedby="coast" disabled="@Disabled" />
                 </div>
-            </div>            
+
+                @if (!Disabled)
+                {
+                    <button type="button" onclick="@(()=>DestroyItem(i))" class="btn btn-light">Удалить</button>
+                }
+            </div>
+            i++;
         }
     </div>
 
-    <button type="button" class="btn btn-success">Создать</button>
+    @if (Error)
+    {
+        <div class="error mb-3">Форма заполнена неверно</div>
+    }
+
+    @if (!Disabled)
+    {
+        <div class="mb-3">
+            @if (SupplyId == "0")
+            {
+                <button type="button" class="btn btn-success" @onclick="Submit">
+                    Создать
+                </button>
+            }
+            else
+            {
+                <button type="button" class="btn btn-danger" @onclick="DeleteSupply">
+                    Удалить
+                </button>
+                <button type="button" class="btn btn-success" @onclick="UpdateStatus">
+                    Провести поставку
+                </button>
+            }
+        </div>
+    }    
 </div>
 
 @code {
-    private String Organization { get; set; }
+    [Parameter]
+    public string SupplyId { get; set; } = "0";
+
+    private Boolean Disabled { get; set; } = false;
+
+    private Boolean Error = false;
+
+    private ElementReference fileUpload;
+
+    private String Organization { get; set; } = "";
+
+    private DateTime SupplyDate { get; set; } = DateTime.Now;
 
     private List<Item> items { get; set; } = new List<Item>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (SupplyId != "0")
+        {
+            var supply = await supplyController.GetSupplyAsync(int.Parse(SupplyId));
+            Organization = supply.Organization;
+            SupplyDate = supply.SupplyDate;
+            Disabled = supply.Done;
+
+            items.AddRange(await itemsController.GetItemsBySupplyId(supply.SupplyId));
+        }
+    }
 
     private void AddNewItem(){
         var item = new Item()
@@ -87,5 +164,124 @@
         items.Add(item);
 
         StateHasChanged();
+    }
+
+    private void DestroyItem(int index)
+    {
+        items.Remove(items[index - 1]);
+
+        StateHasChanged();
+    }
+
+    private async void SetImage(ChangeEventArgs changeEventArgs, int index)
+    {
+        var files = await fileReaderService.CreateReference(fileUpload).EnumerateFilesAsync();
+
+        try
+        {
+            MemoryStream memoryStream = await files.First().CreateMemoryStreamAsync();
+            items[index - 1].Image = memoryStream.ToArray();
+
+            StateHasChanged();
+        }
+        catch(Exception e){}       
+    }
+
+    private Boolean Validate()
+    {
+        if (Organization == "") return false;
+
+        Boolean checkResult = true;
+
+        items.ForEach(item =>
+        {
+            if (item.Type == "") checkResult = false;
+            if (item.Image == null) checkResult = false;
+            if (item.Coast == 0) checkResult = false;
+            if (item.Name == "") checkResult = false;
+            if (item.Count == 0) checkResult = false;
+        });
+
+        if (checkResult == false) return false;
+
+        return true;
+    }
+
+    private void Submit()
+    {
+        if (!Validate())
+        {
+            Error = true;
+            return;
+        }
+
+        Error = false;
+
+        Double summ = 0;
+
+        foreach (var item in items)
+        {
+            summ = summ + item.Coast;
+        }
+
+        Supply supplies = new Supply()
+        {
+            Organization = Organization,
+            Done = false,
+            CreatedAt = DateTime.Now,
+            Summ = summ,
+            SupplyDate = SupplyDate
+        };
+
+        int supplyId =  supplyController.CreateSupply(supplies);
+
+        foreach (var item in items)
+        {
+            item.SupplyID = supplyId;
+        }
+
+        itemsController.CreateItemsFromArray(items.ToArray());
+
+        NavigationManager.NavigateTo("/supplies");
+    }
+
+    private void DeleteSupply()
+    {
+        supplyController.DeleteSupply(int.Parse(SupplyId));
+        itemsController.DeleteItemsFromArray(items.ToArray());
+
+        NavigationManager.NavigateTo("/supplies");
+    }
+
+    private void UpdateStatus()
+    {
+        if (!Validate())
+        {
+            Error = true;
+            return;
+        }
+
+        Error = false;
+
+        Double summ = 0;
+
+        foreach (var item in items)
+        {
+            summ = summ + item.Coast;
+        }
+
+        Supply supply = new Supply()
+            {
+                SupplyId = int.Parse(SupplyId),
+                Organization = Organization,
+                Done = true,
+                CreatedAt = DateTime.Now,
+                Summ = summ,
+                SupplyDate = SupplyDate
+            };
+
+        supplyController.UpdateSupply(supply);
+
+        NavigationManager.NavigateTo("/supplies");
     }
 }

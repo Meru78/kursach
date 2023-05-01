@@ -25,3 +25,12 @@
 .add_button{
     margin-left: 10px;
 }
+
+.image{
+    width: 100px;
+    height:100px;
+}
+
+.error{
+    color: red;
+}

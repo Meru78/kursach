@@ -1,7 +1,52 @@
 ﻿@page "/"
+@using kursach.DBManager.Models.ItemsModels;
+@using kursach.DBManager.Models.ItemModels;
+@inject ItemsController itemsController;
 
-<PageTitle>Акции</PageTitle>
+<PageTitle>Главная</PageTitle>
 
-<h1>Акции</h1>
+<h1>Главная</h1>
 
-Welcome to your new app.
+<div class="container">
+    @{
+        int index = 1;
+    }
+    @foreach (var item in items)
+    {
+        <div class="item_box">
+            @item.Name
+        </div>
+
+        index++;
+    }
+</div>
+
+@code{
+    private Item[] items { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        items = await itemsController.GetItems();
+    }
+}
+
+<style>
+    .item_box{
+        display: inline-block;
+
+        width: 150px;
+        height: 170px;
+
+        border: solid 0.1px;
+        border-color: ghostwhite;
+        background-color: ghostwhite;
+        border-radius: 3px;
+
+        margin-right: 25px;
+        margin-bottom: 25px;
+    }
+    .container{
+        display: inline-block;
+        width: 100%;
+    }
+</style>
