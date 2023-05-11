@@ -2,6 +2,8 @@ using Blazored.LocalStorage;
 using kursach;
 using kursach.DBManager;
 using kursach.DBManager.Models.ItemsModels;
+using kursach.DBManager.Models.SellsModels;
+using kursach.DBManager.Models.SubsidiaryModels;
 using kursach.DBManager.Models.SupplyModels;
 using kursach.DBManager.Models.UserModels;
 using kursach.utils;
@@ -21,6 +23,10 @@ internal class Program
         builder.Services.AddTransient<UserController>();
         builder.Services.AddTransient<SupplyController>();
         builder.Services.AddTransient<ItemsController>();
+        builder.Services.AddTransient<SellsController>();
+        builder.Services.AddTransient<SubsidiaryController>();
+
+        builder.Services.AddSingleton<ItemsInCartController>();
 
         builder.Services.AddBlazoredLocalStorage();
         // auth conn

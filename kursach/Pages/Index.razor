@@ -2,31 +2,55 @@
 @using kursach.DBManager.Models.ItemsModels;
 @using kursach.DBManager.Models.ItemModels;
 @inject ItemsController itemsController;
+@inject ItemsInCartController itemsInCartController;
 
 <PageTitle>Главная</PageTitle>
 
 <h1>Главная</h1>
 
 <div class="container">
-    @{
-        int index = 1;
-    }
     @foreach (var item in items)
     {
         <div class="item_box">
-            @item.Name
+            <div class="image_container mb-1">
+                <img class="image" src="@(string.Format("data:image/jpg;base64,{0}", Convert.ToBase64String(item.Image)))" />
+            </div>
+            <div>@item.Name</div>
+            <button @onclick="@(()=>AddToCard(item))" class="btn btn-success">В корзину</button>
         </div>
-
-        index++;
     }
 </div>
 
+<NavLink href="/cart">
+    <div class="cart_item">
+        <span class="oi oi-cart" />
+        <div class="cart_items_count">@CountItemsInCart</div>
+    </div>
+</NavLink>
+
+
 @code{
     private Item[] items { get; set; }
+    private int CountItemsInCart { get; set; } = 0;
+
+    private List<Item> ItemsInCart { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        items = await itemsController.GetItems();
+        items = await itemsController.GetItems("");
+
+        ItemsInCart = itemsInCartController.GetItemsFromCart();
+        if (ItemsInCart != null)
+        {
+            CountItemsInCart = ItemsInCart.Count;
+        }
+    }
+
+    private async void AddToCard(Item item)
+    {
+        ItemsInCart = itemsInCartController.AddItemsToCart(item);
+
+        CountItemsInCart = ItemsInCart.Count;
     }
 }
 
@@ -35,18 +59,53 @@
         display: inline-block;
 
         width: 150px;
-        height: 170px;
+        height: 215px;
 
         border: solid 0.1px;
-        border-color: ghostwhite;
-        background-color: ghostwhite;
+        border-color: #ede4e4;
+        background-color: #ede4e4;
         border-radius: 3px;
 
         margin-right: 25px;
         margin-bottom: 25px;
+        text-align: right;
     }
     .container{
         display: inline-block;
         width: 100%;
+    }
+    .image_container{
+        text-align: center;
+    }
+    .image{
+        width: 150px;
+        height: 140px;
+    }
+
+
+    .cart_item {
+        position: fixed;
+        background-color: lightgray;
+        width: 50px;
+        height: 50px;
+        top: 90%;
+        right: 10px;
+        border-radius: 50px;
+        text-align: center;
+    }
+
+    .cart_item span {
+        font-size: 32px;
+        vertical-align: text-top;
+    }
+
+    .cart_items_count{
+        width: 20px;
+        height: 20px;
+        
+        border-radius: 50px;
+        background-color: red;
+        
+        color: white;
     }
 </style>

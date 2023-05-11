@@ -1,0 +1,107 @@
+﻿@page "/cart"
+@using kursach.DBManager.Models.ItemsModels;
+@using kursach.DBManager.Models.ItemModels;
+@using kursach.DBManager.Models.SellsModels;
+@using kursach.DBManager.Models.UserModels;
+@inject ItemsController itemsController
+@inject ItemsInCartController itemsInCartController
+@inject NavigationManager NavigationManager
+@inject SellsController sellsController
+@inject Blazored.LocalStorage.ILocalStorageService iLocalStorageService
+
+<PageTitle>Корзина</PageTitle>
+
+@if (ItemsInCart != null && ItemsInCart.Count != 0)
+{
+    <h3>Корзина</h3>
+    @foreach (var item in ItemsInCart.Select((name, index) => (name, index)))
+    {
+        <div class="item_container mb-3">
+            <div>
+                <img class="image" src="@(string.Format("data:image/jpg;base64,{0}", Convert.ToBase64String(item.name.Image)))" />
+            </div>
+            <div class="text_container">
+                <div>Название: @item.name.Name</div>
+                <div>Стоимость: @item.name.Coast Р.</div>
+
+                <div class="count_container">
+                    <button class="btn btn-light btn-sm" @onclick=@(()=>SubItemCount(item.index))>-</button>
+                    @ItemCounts[item.index]
+                    <button class="btn btn-light btn-sm" @onclick=@(()=>AddItemCount(item.index))>+</button>
+                </div>
+            </div>
+            <div class="delete-btn">
+                <button class="btn btn-light btn-sm" @onclick="(()=>DestroyItem(item.index))">Удалить</button>
+            </div>
+        </div>
+    }
+
+    <button class="btn btn-success" @onclick="Submit">Оформить</button>
+}
+else
+{
+    <h3>Корзина пуста</h3>
+}
+
+@code {
+    private List<Item> ItemsInCart { get; set; }
+    private List<int> ItemCounts;
+
+    protected override async Task OnInitializedAsync()
+    {
+        ItemsInCart = itemsInCartController.GetItemsFromCart();
+
+        ItemCounts = new List<int>() { };
+
+        if (ItemsInCart == null) return;
+
+        foreach (var item in ItemsInCart)
+        {
+            ItemCounts.Add(1);
+        }
+    }
+
+    private void AddItemCount(int index)
+    {
+        if (ItemCounts[index] == ItemsInCart[index].Count) return;
+        ItemCounts[index] = ItemCounts[index] + 1;
+
+        StateHasChanged();
+    }
+    private void SubItemCount(int index)
+    {
+        if (ItemCounts[index] == 1) return;
+        ItemCounts[index] = ItemCounts[index] - 1;
+
+        StateHasChanged();
+    }
+    private void DestroyItem(int index)
+    {
+        ItemsInCart = itemsInCartController.DestroyItemInCart(ItemsInCart[index]);
+
+        StateHasChanged();
+    }
+
+    private async void Submit()
+    {
+        User user = await iLocalStorageService.GetItemAsync<User>("user");
+        foreach(var item in ItemsInCart.Select((name, index)=>(name, index)))
+        {
+            sellsController.CreateSells(new Sells()
+            {
+                ItemId = item.name.ItemId,
+                Count = ItemCounts[item.index],
+                Coast = item.name.Coast * ItemCounts[item.index],
+                Status = false,
+                CreatedAt = DateTime.Now,
+                UserId = user.UserId
+            });
+
+            itemsController.UpdateItemsCount(item.name.Count - ItemCounts[item.index], item.name.ItemId);
+        }
+
+
+        itemsInCartController.ClearCart();
+        NavigationManager.NavigateTo("/");
+    }
+}

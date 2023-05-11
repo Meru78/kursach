@@ -1,4 +1,8 @@
-﻿<style>
+﻿@using kursach.DBManager.Models.SubsidiaryModels;
+@inject SubsidiaryController subsidiaryController
+@inject Blazored.LocalStorage.ILocalStorageService iLocalStorageService
+
+<style>
     .nav_menu_label{
         margin-top: 15px;
         font-size: 10pt;
@@ -8,6 +12,16 @@
 
 <div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
     <nav class="flex-column">
+        <div class="nav-item px-3">
+            <select class="form-select">
+                @foreach (var subsidiary in Subsidiaries)
+                {
+                    <option onclick="@(()=>SelectSubsidiary(subsidiary))" value="@subsidiary.SubsidiaryId">
+                        @subsidiary.Addres
+                    </option>
+                }                
+            </select>
+        </div>
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
                 <p class="nav_menu_label">Главная</p>
@@ -41,6 +55,11 @@
                             <p class="nav_menu_label">Поставки</p>
                         </NavLink>
                     </div>
+                    <div class="nav-item px-3">
+                        <NavLink class="nav-link" href="sells">
+                            <p class="nav_menu_label">Список продаж</p>
+                        </NavLink>
+                    </div>
                 </Authorized>
             </AuthorizeView>
         </CascadingAuthenticationState>
@@ -48,6 +67,7 @@
 </div>
 
 @code {
+    private List<Subsidiary> Subsidiaries { get; set; }
     private bool collapseNavMenu = true;
 
     private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
@@ -55,5 +75,19 @@
     private void ToggleNavMenu()
     {
         collapseNavMenu = !collapseNavMenu;
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        Subsidiaries = await subsidiaryController.GetSubsidiaryAsync();
+        try
+        {
+            await iLocalStorageService.SetItemAsync<Subsidiary>("subsidiary", Subsidiaries.FirstOrDefault());
+        } catch(Exception e){}
+    }
+
+    private async void SelectSubsidiary(Subsidiary subsidiary)
+    {
+        await iLocalStorageService.SetItemAsync<Subsidiary>("subsidiary", subsidiary);
     }
 }

@@ -9,7 +9,7 @@ namespace kursach.DBManager.Models.ItemsModels
             _context = context;
         }
 
-        DBManager _context;
+        DBManager _context;       
 
         public void CreateItemsFromArray(Item[] items)
         {
@@ -29,11 +29,24 @@ namespace kursach.DBManager.Models.ItemsModels
             _context.Items.RemoveRange(items);
             _context.SaveChanges();
         }
-        public Task<Item[]> GetItems()
+        public Task<Item[]> GetItems(string type)
         {
-            var items = _context.Items.ToArray();
+            var items = _context.Items.Where(row => row.Count > 0);
 
-            return Task.FromResult(items);
+            if(type != "")
+            {
+                var result = items.Where(row=>row.Type == type);
+                return Task.FromResult(result.ToArray());
+            }
+
+            return Task.FromResult(items.ToArray());
+        }
+
+        public void UpdateItemsCount(int count, int id)
+        {
+            var item = _context.Items.Where(row => row.ItemId == id).FirstOrDefault();
+            item.Count = count;
+            _context.SaveChanges();
         }
     }
 }

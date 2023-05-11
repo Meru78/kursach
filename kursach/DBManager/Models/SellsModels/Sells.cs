@@ -19,5 +19,7 @@ namespace kursach.DBManager.Models.SellsModels
         public bool Status { get; set; }
         [Column("created_at")]
         public DateTime CreatedAt { get; set; }
+        [Column("user_id")]
+        public int UserId { get; set; }
     }
 }
