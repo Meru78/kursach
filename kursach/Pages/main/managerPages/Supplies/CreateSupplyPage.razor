@@ -2,6 +2,7 @@
 @using Tewr.Blazor.FileReader;
 @using kursach.DBManager.Models.ItemModels;
 @using kursach.DBManager.Models.ItemsModels;
+@using kursach.DBManager.Models.SubsidiaryModels;
 @using kursach.DBManager.Models.SupplyModels;
 @using utils;
 @using Supplies;
@@ -9,6 +10,7 @@
 @inject SupplyController supplyController;
 @inject ItemsController itemsController;
 @inject NavigationManager NavigationManager;
+@inject Blazored.LocalStorage.ILocalStorageService iLocalStorageService
 
 <PageTitle>
     Новая поставка
@@ -150,7 +152,9 @@
         }
     }
 
-    private void AddNewItem(){
+    private async void AddNewItem(){
+        Subsidiary sub = await iLocalStorageService.GetItemAsync<Subsidiary>("subsidiary");
+
         var item = new Item()
             {
                 Name = "",
@@ -159,7 +163,8 @@
                 Image = null,
                 Coast = 0,
                 Count = 0,
-                CreatedAt = DateTime.Now
+                CreatedAt = DateTime.Now,
+                SubsidiaryId = sub.SubsidiaryId
             };
         items.Add(item);
 
@@ -277,7 +282,7 @@
                 Done = true,
                 CreatedAt = DateTime.Now,
                 Summ = summ,
-                SupplyDate = SupplyDate
+                SupplyDate = SupplyDate,                
             };
 
         supplyController.UpdateSupply(supply);

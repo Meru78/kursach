@@ -1,24 +1,29 @@
 ﻿@page "/"
 @using kursach.DBManager.Models.ItemsModels;
 @using kursach.DBManager.Models.ItemModels;
+@using kursach.DBManager.Models.SubsidiaryModels;
 @inject ItemsController itemsController;
 @inject ItemsInCartController itemsInCartController;
+@inject Blazored.LocalStorage.ILocalStorageService iLocalStorageService
 
 <PageTitle>Главная</PageTitle>
 
 <h1>Главная</h1>
 
 <div class="container">
-    @foreach (var item in items)
+    @if(items is not null)
     {
-        <div class="item_box">
-            <div class="image_container mb-1">
-                <img class="image" src="@(string.Format("data:image/jpg;base64,{0}", Convert.ToBase64String(item.Image)))" />
+        @foreach (var item in items)
+        {
+            <div class="item_box">
+                <div class="image_container mb-1">
+                    <img class="image" src="@(string.Format("data:image/jpg;base64,{0}", Convert.ToBase64String(item.Image)))" />
+                </div>
+                <div>@item.Name</div>
+                <button @onclick="@(()=>AddToCard(item))" class="btn btn-success">В корзину</button>
             </div>
-            <div>@item.Name</div>
-            <button @onclick="@(()=>AddToCard(item))" class="btn btn-success">В корзину</button>
-        </div>
-    }
+        }
+    }    
 </div>
 
 <NavLink href="/cart">
@@ -37,7 +42,12 @@
 
     protected override async Task OnInitializedAsync()
     {
-        items = await itemsController.GetItems("");
+        try
+        {
+            Subsidiary sub = await iLocalStorageService.GetItemAsync<Subsidiary>("subsidiary");
+            items = await itemsController.GetItems("", sub);
+        }catch(Exception e){}
+    
 
         ItemsInCart = itemsInCartController.GetItemsFromCart();
         if (ItemsInCart != null)

@@ -1,4 +1,5 @@
 ﻿using kursach.DBManager.Models.ItemModels;
+using kursach.DBManager.Models.SubsidiaryModels;
 
 namespace kursach.DBManager.Models.ItemsModels
 {
@@ -29,9 +30,10 @@ namespace kursach.DBManager.Models.ItemsModels
             _context.Items.RemoveRange(items);
             _context.SaveChanges();
         }
-        public Task<Item[]> GetItems(string type)
+        public Task<Item[]> GetItems(string type, Subsidiary subsidiary)
         {
-            var items = _context.Items.Where(row => row.Count > 0);
+            Console.WriteLine(subsidiary.SubsidiaryId);
+            var items = _context.Items.Where(row => row.Count > 0 && row.Subsidiary.SubsidiaryId == subsidiary.SubsidiaryId);
 
             if(type != "")
             {

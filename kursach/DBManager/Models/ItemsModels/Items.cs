@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using kursach.DBManager.Models.SubsidiaryModels;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Reflection.Metadata;
 
 namespace kursach.DBManager.Models.ItemModels
@@ -22,5 +23,9 @@ namespace kursach.DBManager.Models.ItemModels
         [Column("created_at")]
         public DateTime CreatedAt { get; set; }
         [Column("supply_id")] public int SupplyID { get; set; }
+
+        [Column("subsidiary_id")]
+        public int SubsidiaryId { get; set; }
+        public Subsidiary Subsidiary { get; set; }
     }
 }

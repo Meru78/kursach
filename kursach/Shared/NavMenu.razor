@@ -1,6 +1,7 @@
 ﻿@using kursach.DBManager.Models.SubsidiaryModels;
 @inject SubsidiaryController subsidiaryController
 @inject Blazored.LocalStorage.ILocalStorageService iLocalStorageService
+@inject NavigationManager NavigationManager
 
 <style>
     .nav_menu_label{
@@ -13,10 +14,10 @@
 <div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
     <nav class="flex-column">
         <div class="nav-item px-3">
-            <select class="form-select">
+            <select class="form-select" @onchange="SelectSubsidiary">
                 @foreach (var subsidiary in Subsidiaries)
                 {
-                    <option onclick="@(()=>SelectSubsidiary(subsidiary))" value="@subsidiary.SubsidiaryId">
+                    <option value="@subsidiary.SubsidiaryId">
                         @subsidiary.Addres
                     </option>
                 }                
@@ -86,8 +87,9 @@
         } catch(Exception e){}
     }
 
-    private async void SelectSubsidiary(Subsidiary subsidiary)
+    private async void SelectSubsidiary(ChangeEventArgs e)
     {
-        await iLocalStorageService.SetItemAsync<Subsidiary>("subsidiary", subsidiary);
+        Subsidiary subsidiaries = Subsidiaries.Where(row => row.SubsidiaryId == int.Parse(e.Value.ToString())).FirstOrDefault();
+        await iLocalStorageService.SetItemAsync<Subsidiary>("subsidiary", subsidiaries);
     }
 }
