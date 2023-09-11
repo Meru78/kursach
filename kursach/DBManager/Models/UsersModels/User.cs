@@ -5,7 +5,7 @@ namespace kursach.DBManager.Models.UserModels
 {
     public class User
     {
-        [Column("id_user")]
+        [Column("user_id")]
         public int UserId { get; set; }
         [Column("FIO")]
         public string? FIO { get; set; }

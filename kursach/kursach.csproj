@@ -8,11 +8,13 @@
 
   <ItemGroup>
     <None Remove="Pages\main\basicPages\Flowers.razor.css" />
+    <None Remove="Pages\main\managerPages\Sells\SellsPage.razor.css" />
     <None Remove="Pages\main\managerPages\Supplies\CreateSupplyPage.razor.css" />
   </ItemGroup>
 
   <ItemGroup>
     <Content Include="Pages\main\basicPages\Flowers.razor.css" />
+    <Content Include="Pages\main\managerPages\Sells\SellsPage.razor.css" />
     <Content Include="Pages\main\managerPages\Supplies\CreateSupplyPage.razor.css" />
   </ItemGroup>
 

@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using kursach.DBManager.Models.ItemModels;
+using kursach.DBManager.Models.UserModels;
+using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -21,5 +23,7 @@ namespace kursach.DBManager.Models.SellsModels
         public DateTime CreatedAt { get; set; }
         [Column("user_id")]
         public int UserId { get; set; }
+        public Item item { get; set; }
+        public User user { get; set; }
     }
 }

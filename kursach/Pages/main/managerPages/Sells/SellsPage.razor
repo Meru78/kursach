@@ -1,7 +1,56 @@
-﻿@page "/sells"
+﻿@using kursach.utils;
+@using kursach.DBManager.Models.SellsModels;
+@inject SellsController sellsController;
+@inject NavigationManager NavigationManager
 
-<h3>SellsPage</h3>
+@page "/sells"
+
+<PageTitle>
+    Список продаж
+</PageTitle>
+
+<div class="searchBlock">
+    <div class="input-group mb-2 mr-2">
+        <span class="input-group-text w-25" id="Login">ФИО Клиента</span>
+        <input type="text" class="form-control" aria-describedby="Login" @bind-value="FIO">
+    </div>
+    <button class="btn btn-primary w-25" @onclick="FindSells">Поиск</button>
+</div>
+
+@if (sells is not null)
+{
+    @foreach (var sell in sells)
+    {
+        <div class="mb-3">
+            <div class="item_container">
+                <div>
+                    <img class="image" src="@(string.Format("data:image/jpg;base64,{0}", Convert.ToBase64String(sell.item.Image)))" />
+                </div>
+                <div class="text_container">
+                    <div>название: @sell.item.Name</div>
+                    <div>стоимость: @sell.item.Coast р.</div>
+
+                    <div class="count_container">
+                        @sell.item.Count
+                    </div>
+                </div>
+            </div>            
+            <button class="btn btn-primary w-25 h-25" @onclick="@(()=>DeleteItem(sell))">Товар выдан</button>
+        </div>
+    }
+}
 
 @code {
+    private Sells[] sells { get; set; } = null;
+    private string FIO { get; set; }
 
+    private async void FindSells()
+    {
+        sells = await sellsController.GetSellsByClient(FIO);
+    }
+    private async void DeleteItem(Sells sell)
+    {
+        sellsController.DeleteSell(sell);
+        sells = await sellsController.GetSellsByClient(FIO);
+    }
 }
